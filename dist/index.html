@@ -16,6 +16,27 @@
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
+  
+  <div id="back-bar" style="
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 8px 16px 4px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem;
+    color: #888;
+    background: #FDF0FF;
+  ">
+    <a href="https://dayspop.com" style="color:#C85FD4; font-weight:700; text-decoration:none; display:flex; align-items:center; gap:4px;">
+      ← dayspop.com
+    </a>
+    <span style="font-size:0.72rem; opacity:0.6;">Add to Home Screen for best experience</span>
+  </div>
+  <script>
+    // Hide the back bar when running as installed PWA (standalone mode)
+    if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+      document.getElementById('back-bar').style.display = 'none';
+    }
+  </script>
+
   <canvas id="sparkles"></canvas>
 
   <div id="app">
