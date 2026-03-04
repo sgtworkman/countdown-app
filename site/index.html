@@ -838,6 +838,31 @@
     font-size: 1rem;
   }
 
+  
+  /* Origin story */
+  .origin-story {
+    padding: 20px 20px 40px;
+    display: flex;
+    justify-content: center;
+  }
+  .origin-card {
+    background: linear-gradient(135deg, rgba(200,95,212,0.08), rgba(255,107,157,0.08));
+    border: 1px solid rgba(200,95,212,0.2);
+    border-radius: 20px;
+    padding: 28px 36px;
+    max-width: 520px;
+    text-align: center;
+  }
+  .origin-emoji { font-size: 2rem; display: block; margin-bottom: 12px; }
+  .origin-text {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .origin-text em { font-style: italic; color: #C85FD4; font-weight: 700; }
+
   </style>
 </head>
 <body>
@@ -1039,6 +1064,19 @@
     <p class="hero-note reveal">Web app live now &middot; iPhone &amp; Android &middot; Add to home screen</p>
   </section>
 
+  
+  <!-- ORIGIN STORY -->
+  <section class="origin-story">
+    <div class="origin-card">
+      <span class="origin-emoji">✨</span>
+      <p class="origin-text">
+        DaysPop started with a simple question from an 11-year-old:<br>
+        <em>"Dad, how many days until my birthday?"</em><br><br>
+        This one's for you, Miabella. 💜
+      </p>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer>
     <div class="footer-brand">DaysPop</div>
@@ -1048,7 +1086,7 @@
       <a href="#">Support</a>
       <a href="#">Contact</a>
     </div>
-    <p class="footer-copy">&copy; 2026 DaysPop. Made with &#128156;</p>
+    <p class="footer-copy">&copy; 2026 DaysPop &nbsp;&middot;&nbsp; Made with 💜 for Miabella &mdash; who always knows exactly how many days until everything ✨</p>
   </footer>
 
   <script>
