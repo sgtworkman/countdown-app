@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>DaysPop</title>
+  <meta name="description" content="Beautiful countdown timers for everything you love">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="DaysPop">
+  <meta name="theme-color" content="#FDF0FF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <canvas id="sparkles"></canvas>
+
+  <div id="app">
+    <section class="screen active" id="screen-home"></section>
+    <section class="screen" id="screen-add"></section>
+    <section class="screen detail-screen" id="screen-detail"></section>
+    <section class="screen" id="screen-settings"></section>
+  </div>
+
+  <button class="fab" id="fab" onclick="handleAddTap()" aria-label="Add countdown">+</button>
+
+  <div class="paywall-overlay" id="paywall"></div>
+  <div id="confirm-root"></div>
+  <div id="pro-success-root"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
