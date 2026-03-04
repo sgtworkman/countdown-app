@@ -766,6 +766,78 @@
   .waitlist-success { color: #06D6A0; font-weight: 700; font-size: 1rem; }
   .waitlist-error { color: #FF6B9D; font-weight: 700; font-size: 0.9rem; }
 
+  
+  /* Live Now badge */
+  .live-now-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(6,214,160,0.2), rgba(6,214,160,0.1));
+    border: 1px solid rgba(6,214,160,0.5);
+    color: #06D6A0;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 6px 20px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+    animation: pulse-green 2s infinite;
+  }
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(6,214,160,0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(6,214,160,0); }
+  }
+  /* Try Now button */
+  .btn-try-now {
+    display: inline-block;
+    background: linear-gradient(135deg, #C85FD4, #FF6B9D);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    padding: 18px 40px;
+    border-radius: 999px;
+    text-decoration: none;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 32px rgba(200,95,212,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-try-now:hover { transform: scale(1.03); box-shadow: 0 12px 40px rgba(200,95,212,0.5); }
+  /* Native coming soon inline */
+  .native-coming {
+    margin-top: 32px;
+    opacity: 0.7;
+    font-size: 0.85rem;
+    color: #555;
+  }
+  .native-coming span { display: block; margin-bottom: 8px; font-weight: 600; }
+  .waitlist-inline {
+    display: inline-flex;
+    gap: 6px;
+    border: 1px solid rgba(200,95,212,0.3);
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.9);
+  }
+  .waitlist-inline input {
+    border: none;
+    outline: none;
+    padding: 8px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    background: transparent;
+    width: 220px;
+    color: #1A1A2E;
+  }
+  .waitlist-inline button {
+    border: none;
+    background: linear-gradient(135deg, #C85FD4, #FF6B9D);
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
   </style>
 </head>
 <body>
@@ -805,13 +877,22 @@
       waiting fun with beautiful countdown timers you'll actually want to check.
     </p>
 
-    <div class="coming-soon-badge">✨ Coming Soon to iOS &amp; Android</div>
+    <div class="live-now-badge">🎉 Web App Live Now!</div>
 
-    <form class="waitlist-form" id="waitlist-hero" onsubmit="submitWaitlist(event, 'waitlist-hero')">
-      <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
-      <button type="submit">Notify Me 🎉</button>
-    </form>
-    <p class="hero-note" id="waitlist-hero-msg">Be first to know when we launch &middot; No spam, ever</p>
+    <a href="https://app.dayspop.com" class="btn-try-now">
+      ✨ Try DaysPop Free — Open the App
+    </a>
+
+    <p class="hero-note">Works on iPhone &amp; Android &middot; No download required &middot; Add to home screen</p>
+
+    <div class="native-coming">
+      <span>Native iOS &amp; Android apps coming soon</span>
+      <form class="waitlist-inline" id="waitlist-hero" onsubmit="submitWaitlist(event, 'waitlist-hero')">
+        <input type="email" name="email" placeholder="Notify me when they launch" autocomplete="email">
+        <button type="submit">→</button>
+      </form>
+      <p id="waitlist-hero-msg" style="font-size:0.8rem;opacity:0.7;margin-top:6px;"></p>
+    </div>
 
     <div class="scroll-hint" aria-hidden="true">&darr;</div>
   </section>
@@ -952,11 +1033,10 @@
   <!-- CTA -->
   <section class="hero" style="min-height: auto; padding: 40px 24px 80px;">
     <h2 class="section-title reveal">Ready to start counting?</h2>
-    <form class="waitlist-form reveal" id="waitlist-cta" onsubmit="submitWaitlist(event, 'waitlist-cta')">
-      <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
-      <button type="submit">Notify Me 🎉</button>
-    </form>
-    <p class="hero-note reveal" id="waitlist-cta-msg">Be first to know when we launch &middot; No spam, ever</p>
+    <a href="https://app.dayspop.com" class="btn-try-now reveal">
+      ✨ Open DaysPop — It's Free
+    </a>
+    <p class="hero-note reveal">Web app live now &middot; iPhone &amp; Android &middot; Add to home screen</p>
   </section>
 
   <!-- FOOTER -->
