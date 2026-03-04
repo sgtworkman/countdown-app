@@ -192,8 +192,10 @@ function renderHome() {
   let html = `
     <div class="header">
       <div class="header-left">
-        <img src="dayspop-logo.jpg" alt="DaysPop" class="header-logo">
-        <span class="header-title">DaysPop</span>
+        <a href="https://dayspop.com" class="header-logo-link" title="Back to DaysPop.com">
+          <img src="dayspop-logo.jpg" alt="DaysPop" class="header-logo">
+          <span class="header-title">DaysPop</span>
+        </a>
         ${pro ? '<span class="header-pro">PRO</span>' : ''}
       </div>
       <button class="header-btn" onclick="navigate('settings')" aria-label="Settings">⚙️</button>
