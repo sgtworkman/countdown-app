@@ -65,6 +65,7 @@ body {
   -webkit-backdrop-filter: blur(20px);
 }
 .header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.header-logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: rgba(200,95,212,0.15); border-radius: 8px; }
 .header-logo { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
 .header-title {
   font-family: var(--font-display); font-weight: 700; font-size: 22px;
