@@ -1,18 +1,21 @@
 {
   "expo": {
-    "name": "countdown-app",
+    "name": "Countdown",
     "slug": "countdown-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "countdown",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.workman.countdown",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,10 +24,20 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "package": "com.workman.countdown"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Countdown to access your photos for custom backgrounds."
+        }
+      ]
+    ]
   }
 }
