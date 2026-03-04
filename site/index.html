@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DaysPop — Countdown to everything you love</title>
+  <meta name="description" content="DaysPop makes counting down to vacations, birthdays, and holidays fun and colorful. Beautiful countdown timers with custom themes, emojis, and photo backgrounds.">
+  <meta property="og:title" content="DaysPop — Countdown to everything you love">
+  <meta property="og:description" content="Beautiful countdown timers with custom themes, emojis, and photo backgrounds. Free on iOS and Android.">
+  <meta property="og:image" content="dayspop-logo.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/jpeg" href="dayspop-logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --lavender: #d8b4fe;
+      --lavender-soft: #ede9fe;
+      --pink-hot: #ec4899;
+      --pink-soft: #f9a8d4;
+      --purple-deep: #7c3aed;
+      --purple-mid: #a855f7;
+      --purple-light: #c084fc;
+      --white: #ffffff;
+      --text-dark: #1e1035;
+      --text-mid: #4a3560;
+      --text-light: #8b7aa0;
+      --glow-pink: rgba(236, 72, 153, 0.4);
+      --glow-purple: rgba(168, 85, 247, 0.4);
+      --glass: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.3);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text-dark);
+      background: linear-gradient(170deg, #ede9fe 0%, #fce7f3 30%, #e0e7ff 60%, #fdf2f8 100%);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ========= SPARKLE CANVAS ========= */
+    #sparkles {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ========= NAV ========= */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      background: rgba(255, 255, 255, 0.55);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 4px 30px rgba(168, 85, 247, 0.1); }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .nav-name {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--purple-deep);
+      letter-spacing: -0.5px;
+    }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-mid);
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--purple-deep); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--pink-hot), var(--purple-mid));
+      color: var(--white) !important;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: 14px !important;
+      transition: transform 0.2s, box-shadow 0.2s !important;
+      box-shadow: 0 4px 15px var(--glow-pink);
+    }
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px var(--glow-pink);
+    }
+
+    /* ========= HERO ========= */
+    .hero {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      overflow: hidden;
+    }
+
+    /* Floating gradient blobs */
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(236,72,153,0.18) 0%, transparent 70%);
+      top: -100px;
+      right: -150px;
+      animation: float-blob 14s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%);
+      bottom: -80px;
+      left: -120px;
+      animation: float-blob 18s ease-in-out infinite reverse;
+      pointer-events: none;
+    }
+
+    @keyframes float-blob {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -40px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--purple-deep);
+      margin-bottom: 32px;
+      animation: fade-in-up 0.8s ease-out both;
+    }
+    .hero-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero-logo {
+      width: 160px;
+      height: 160px;
+      border-radius: 36px;
+      object-fit: cover;
+      margin-bottom: 32px;
+      box-shadow:
+        0 20px 60px rgba(168, 85, 247, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      animation: fade-in-up 0.8s ease-out 0.1s both, logo-float 6s ease-in-out infinite;
+    }
+    @keyframes logo-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .hero h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: clamp(42px, 7vw, 72px);
+      line-height: 1.05;
+      color: var(--text-dark);
+      margin-bottom: 20px;
+      animation: fade-in-up 0.8s ease-out 0.2s both;
+    }
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, var(--pink-hot), var(--purple-mid), var(--purple-deep));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(17px, 2.5vw, 21px);
+      color: var(--text-mid);
+      max-width: 520px;
+      line-height: 1.6;
+      font-weight: 600;
+      margin-bottom: 40px;
+      animation: fade-in-up 0.8s ease-out 0.35s both;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fade-in-up 0.8s ease-out 0.5s both;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 32px;
+      border-radius: 16px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-download:hover {
+      transform: translateY(-3px);
+    }
+    .btn-download svg { width: 24px; height: 24px; }
+
+    .btn-ios {
+      background: var(--text-dark);
+      color: var(--white);
+      box-shadow: 0 8px 30px rgba(30, 16, 53, 0.25);
+    }
+    .btn-ios:hover { box-shadow: 0 12px 40px rgba(30, 16, 53, 0.35); }
+
+    .btn-android {
+      background: var(--white);
+      color: var(--text-dark);
+      border: 2px solid #e5e7eb;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    }
+    .btn-android:hover { box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1); }
+
+    .hero-note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 600;
+      animation: fade-in-up 0.8s ease-out 0.6s both;
+    }
+
+    /* Scroll arrow */
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce-down 2s infinite;
+      opacity: 0.4;
+      font-size: 24px;
+    }
+    @keyframes bounce-down {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ========= PHONE MOCKUP ========= */
+    .phone-section {
+      position: relative;
+      z-index: 2;
+      padding: 0 24px 80px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-mockup {
+      position: relative;
+      width: 280px;
+      height: 580px;
+      border-radius: 40px;
+      background: #0f0f0f;
+      padding: 12px;
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.15),
+        0 0 0 2px rgba(255,255,255,0.1),
+        inset 0 0 0 1px rgba(255,255,255,0.05);
+      animation: fade-in-up 0.8s ease-out 0.3s both;
+    }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      background: #fafafa;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-notch {
+      width: 120px;
+      height: 28px;
+      background: #0f0f0f;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Fake app content inside phone */
+    .mock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px 8px;
+    }
+    .mock-title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text-dark);
+    }
+    .mock-gear { font-size: 16px; opacity: 0.6; }
+
+    .mock-card {
+      margin: 6px 14px;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: card-slide-in 0.6s ease-out both;
+    }
+    .mock-card:nth-child(2) { animation-delay: 0.1s; }
+    .mock-card:nth-child(3) { animation-delay: 0.2s; }
+    .mock-card:nth-child(4) { animation-delay: 0.3s; }
+    .mock-card:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes card-slide-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mock-card.pink { background: linear-gradient(135deg, #ec4899, #a855f7); }
+    .mock-card.ocean { background: linear-gradient(135deg, #0ea5e9, #14b8a6); }
+    .mock-card.sunset { background: linear-gradient(135deg, #f97316, #f472b6); }
+    .mock-card.grape { background: linear-gradient(135deg, #8b5cf6, #4f46e5); }
+
+    .mock-emoji { font-size: 28px; }
+    .mock-card-text { flex: 1; }
+    .mock-card-name { color: white; font-weight: 700; font-size: 13px; }
+    .mock-card-days {
+      color: white;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+    .mock-card-label { color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 600; }
+
+    .mock-fab {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--purple-mid);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px var(--glow-purple);
+    }
+
+    /* ========= FEATURES ========= */
+    .features {
+      position: relative;
+      z-index: 2;
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--purple-mid);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: clamp(30px, 5vw, 44px);
+      text-align: center;
+      color: var(--text-dark);
+      margin-bottom: 56px;
+      line-height: 1.15;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      padding: 36px 32px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(168, 85, 247, 0.12);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .feature-icon.pink { background: linear-gradient(135deg, #fce7f3, #fdf2f8); }
+    .feature-icon.purple { background: linear-gradient(135deg, #ede9fe, #f3e8ff); }
+    .feature-icon.blue { background: linear-gradient(135deg, #dbeafe, #e0f2fe); }
+    .feature-icon.green { background: linear-gradient(135deg, #d1fae5, #ecfdf5); }
+    .feature-icon.orange { background: linear-gradient(135deg, #ffedd5, #fef3c7); }
+    .feature-icon.indigo { background: linear-gradient(135deg, #e0e7ff, #eef2ff); }
+
+    .feature-title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .feature-desc {
+      font-size: 15px;
+      color: var(--text-mid);
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    /* ========= THEMES SHOWCASE ========= */
+    .themes {
+      position: relative;
+      z-index: 2;
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .theme-strip {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .theme-bubble {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      position: relative;
+      transition: transform 0.3s;
+      cursor: default;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .theme-bubble:hover { transform: scale(1.15) rotate(-3deg); }
+    .theme-bubble span {
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      white-space: nowrap;
+    }
+
+    .tb-pink { background: linear-gradient(135deg, #ec4899, #a855f7); }
+    .tb-ocean { background: linear-gradient(135deg, #0ea5e9, #14b8a6); }
+    .tb-sunset { background: linear-gradient(135deg, #f97316, #f472b6); }
+    .tb-mint { background: linear-gradient(135deg, #34d399, #06b6d4); }
+    .tb-gold { background: linear-gradient(135deg, #f59e0b, #eab308); }
+    .tb-grape { background: linear-gradient(135deg, #8b5cf6, #4f46e5); }
+    .tb-dark { background: linear-gradient(135deg, #374151, #111827); }
+    .tb-minimal { background: linear-gradient(135deg, #f9fafb, #e5e7eb); border: 1px solid #d1d5db; }
+
+    /* ========= PRO SECTION ========= */
+    .pro-section {
+      position: relative;
+      z-index: 2;
+      padding: 80px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .pro-card {
+      background: linear-gradient(145deg, rgba(168,85,247,0.08), rgba(236,72,153,0.06));
+      backdrop-filter: blur(16px);
+      border: 2px solid rgba(168,85,247,0.15);
+      border-radius: 28px;
+      padding: 48px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .pro-card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%);
+    }
+
+    .pro-sparkle { font-size: 42px; margin-bottom: 16px; }
+    .pro-title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .pro-subtitle {
+      font-size: 15px;
+      color: var(--text-mid);
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+    .pro-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+      max-width: 340px;
+      margin: 0 auto 28px;
+    }
+    .pro-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    .pro-features li span { font-size: 20px; }
+
+    .pro-price {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--pink-hot), var(--purple-mid));
+      color: white;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      box-shadow: 0 8px 30px var(--glow-pink);
+      cursor: default;
+    }
+    .pro-fine {
+      display: block;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    /* ========= EMOJI RAIN ========= */
+    .emoji-section {
+      position: relative;
+      z-index: 2;
+      padding: 60px 24px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .emoji-rain {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 32px;
+      line-height: 1.8;
+    }
+    .emoji-rain span {
+      display: inline-block;
+      transition: transform 0.2s;
+      cursor: default;
+    }
+    .emoji-rain span:hover {
+      transform: scale(1.5) rotate(15deg);
+    }
+
+    /* ========= FOOTER ========= */
+    footer {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 48px 24px 36px;
+      border-top: 1px solid rgba(168, 85, 247, 0.1);
+    }
+    .footer-brand {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--purple-deep);
+      margin-bottom: 8px;
+    }
+    .footer-tagline {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--purple-mid); }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-light);
+      opacity: 0.7;
+    }
+
+    /* ========= UTILITIES ========= */
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========= MOBILE ========= */
+    @media (max-width: 768px) {
+      nav { padding: 12px 18px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      .hero { padding: 100px 20px 60px; min-height: auto; }
+      .hero-logo { width: 120px; height: 120px; border-radius: 28px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .pro-card { padding: 36px 24px; }
+      .phone-mockup { width: 240px; height: 500px; }
+      .theme-bubble { width: 56px; height: 56px; border-radius: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .btn-download { width: 100%; max-width: 280px; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="sparkles"></canvas>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-brand">
+      <img src="dayspop-logo.jpg" alt="DaysPop" class="nav-logo">
+      <span class="nav-name">DaysPop</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#themes">Themes</a>
+      <a href="#pro">PRO</a>
+      <a href="#download" class="nav-cta">Download</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="download">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Available on iOS &amp; Android
+    </div>
+
+    <img src="dayspop-logo.jpg" alt="DaysPop App Icon" class="hero-logo">
+
+    <h1>
+      Countdown to<br>
+      <span class="gradient-text">everything you love</span>
+    </h1>
+
+    <p class="hero-sub">
+      Vacations, birthdays, holidays, concerts &mdash; DaysPop makes
+      waiting fun with beautiful countdown timers you'll actually want to check.
+    </p>
+
+    <div class="hero-buttons">
+      <a href="#" class="btn-download btn-ios">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        App Store
+      </a>
+      <a href="#" class="btn-download btn-android">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 2.237l-2.12 3.668a9.997 9.997 0 00-6.806 0L6.477 2.237a.5.5 0 00-.862.503l2.073 3.588A10.03 10.03 0 002 15.5h20a10.03 10.03 0 00-5.688-9.172l2.073-3.588a.5.5 0 10-.862-.503zM8.5 12.5a1 1 0 110-2 1 1 0 010 2zm7 0a1 1 0 110-2 1 1 0 010 2zM2 16.5h20v1c0 2.761-4.477 5-10 5s-10-2.239-10-5v-1z"/></svg>
+        Google Play
+      </a>
+    </div>
+
+    <p class="hero-note">Free to download &middot; No ads &middot; No tracking</p>
+
+    <div class="scroll-hint" aria-hidden="true">&darr;</div>
+  </section>
+
+  <!-- PHONE MOCKUP -->
+  <section class="phone-section reveal">
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="mock-header">
+          <span class="mock-title">Countdowns</span>
+          <span class="mock-gear">&#9881;&#65039;</span>
+        </div>
+        <div class="mock-card pink">
+          <span class="mock-emoji">&#9992;&#65039;</span>
+          <div class="mock-card-text">
+            <div class="mock-card-name">Disney Trip!</div>
+            <div class="mock-card-days">47</div>
+            <div class="mock-card-label">days</div>
+          </div>
+        </div>
+        <div class="mock-card ocean">
+          <span class="mock-emoji">&#127874;</span>
+          <div class="mock-card-text">
+            <div class="mock-card-name">Miabella's Birthday</div>
+            <div class="mock-card-days">12</div>
+            <div class="mock-card-label">days</div>
+          </div>
+        </div>
+        <div class="mock-card sunset">
+          <span class="mock-emoji">&#127876;</span>
+          <div class="mock-card-text">
+            <div class="mock-card-name">Christmas</div>
+            <div class="mock-card-days">295</div>
+            <div class="mock-card-label">days</div>
+          </div>
+        </div>
+        <div class="mock-card grape">
+          <span class="mock-emoji">&#127911;</span>
+          <div class="mock-card-text">
+            <div class="mock-card-name">Concert!!</div>
+            <div class="mock-card-days">8</div>
+            <div class="mock-card-label">days</div>
+          </div>
+        </div>
+        <div class="mock-fab">+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <p class="section-label reveal">Why you'll love it</p>
+    <h2 class="section-title reveal">Built for counting down<br>to the good stuff</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon pink">&#127752;</div>
+        <h3 class="feature-title">Beautiful Themes</h3>
+        <p class="feature-desc">8 stunning gradient color themes from bubbly pink to deep night mode. Every countdown gets its own vibe.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon purple">&#128302;</div>
+        <h3 class="feature-title">Live Countdown</h3>
+        <p class="feature-desc">Watch days, hours, minutes, and seconds tick down in real time. See the exact moment arrive.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon blue">&#128247;</div>
+        <h3 class="feature-title">Custom Photos</h3>
+        <p class="feature-desc">Add your own photo backgrounds from camera roll. Make every countdown personal and unique.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon green">&#128260;</div>
+        <h3 class="feature-title">Recurring Events</h3>
+        <p class="feature-desc">Set birthdays and holidays to repeat annually. They'll automatically reset after the big day.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon orange">&#128064;</div>
+        <h3 class="feature-title">Zero Tracking</h3>
+        <p class="feature-desc">No ads. No analytics. No accounts. Your countdowns stay on your phone, private and offline.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon indigo">&#129395;</div>
+        <h3 class="feature-title">30 Fun Emojis</h3>
+        <p class="feature-desc">Pick from a curated set of emojis to give each countdown its own personality. From planes to unicorns.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THEMES -->
+  <section class="themes" id="themes">
+    <p class="section-label reveal">Express yourself</p>
+    <h2 class="section-title reveal">8 gorgeous color themes</h2>
+    <div class="theme-strip reveal">
+      <div class="theme-bubble tb-pink"><span>Pink</span></div>
+      <div class="theme-bubble tb-ocean"><span>Ocean</span></div>
+      <div class="theme-bubble tb-sunset"><span>Sunset</span></div>
+      <div class="theme-bubble tb-mint"><span>Mint</span></div>
+      <div class="theme-bubble tb-gold"><span>Gold</span></div>
+      <div class="theme-bubble tb-grape"><span>Grape</span></div>
+      <div class="theme-bubble tb-dark"><span>Night</span></div>
+      <div class="theme-bubble tb-minimal"><span>Minimal</span></div>
+    </div>
+  </section>
+
+  <!-- EMOJI RAIN -->
+  <section class="emoji-section reveal">
+    <div class="emoji-rain">
+      <span>&#9992;&#65039;</span><span>&#127958;&#65039;</span><span>&#127874;</span><span>&#127881;</span>
+      <span>&#127876;</span><span>&#127875;</span><span>&#127878;</span><span>&#127869;&#65039;</span>
+      <span>&#127891;</span><span>&#128156;</span><span>&#11088;</span><span>&#127800;</span>
+      <span>&#129419;</span><span>&#127925;</span><span>&#128054;</span><span>&#127796;</span>
+      <span>&#127968;</span><span>&#10084;&#65039;</span><span>&#127928;</span><span>&#127873;</span>
+      <span>&#127942;</span><span>&#127769;</span><span>&#9728;&#65039;</span><span>&#129412;</span>
+      <span>&#128049;</span><span>&#128081;</span><span>&#128133;</span><span>&#127872;</span>
+      <span>&#127919;</span><span>&#128640;</span>
+    </div>
+  </section>
+
+  <!-- PRO -->
+  <section class="pro-section" id="pro">
+    <div class="pro-card reveal">
+      <div class="pro-sparkle">&#10024;</div>
+      <h2 class="pro-title">Unlock Everything</h2>
+      <p class="pro-subtitle">One time. Forever. No subscription.</p>
+      <ul class="pro-features">
+        <li><span>&#9854;&#65039;</span> Unlimited countdowns</li>
+        <li><span>&#127912;</span> All 8 color themes</li>
+        <li><span>&#128247;</span> Custom photo backgrounds</li>
+        <li><span>&#128260;</span> Recurring annual events</li>
+        <li><span>&#128204;</span> Pin your favorites</li>
+      </ul>
+      <div class="pro-price">Get PRO &mdash; $2.99</div>
+      <span class="pro-fine">One-time purchase. No recurring charges. Ever.</span>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="hero" style="min-height: auto; padding: 40px 24px 80px;">
+    <h2 class="section-title reveal">Ready to start counting?</h2>
+    <div class="hero-buttons reveal">
+      <a href="#" class="btn-download btn-ios">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        App Store
+      </a>
+      <a href="#" class="btn-download btn-android">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 2.237l-2.12 3.668a9.997 9.997 0 00-6.806 0L6.477 2.237a.5.5 0 00-.862.503l2.073 3.588A10.03 10.03 0 002 15.5h20a10.03 10.03 0 00-5.688-9.172l2.073-3.588a.5.5 0 10-.862-.503zM8.5 12.5a1 1 0 110-2 1 1 0 010 2zm7 0a1 1 0 110-2 1 1 0 010 2zM2 16.5h20v1c0 2.761-4.477 5-10 5s-10-2.239-10-5v-1z"/></svg>
+        Google Play
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">DaysPop</div>
+    <p class="footer-tagline">Countdown to everything you love</p>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Support</a>
+      <a href="#">Contact</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 DaysPop. Made with &#128156;</p>
+  </footer>
+
+  <script>
+    // ===== SPARKLE CANVAS =====
+    const canvas = document.getElementById('sparkles');
+    const ctx = canvas.getContext('2d');
+    let sparkles = [];
+    const SPARKLE_COUNT = 35;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = document.body.scrollHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Sparkle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.5 + 0.1;
+        this.speed = Math.random() * 0.3 + 0.1;
+        this.phase = Math.random() * Math.PI * 2;
+        this.color = Math.random() > 0.5
+          ? `rgba(236, 72, 153, ${this.opacity})`
+          : `rgba(168, 85, 247, ${this.opacity})`;
+      }
+      update() {
+        this.phase += 0.02;
+        this.y -= this.speed;
+        this.x += Math.sin(this.phase) * 0.3;
+        const flicker = (Math.sin(this.phase * 3) + 1) / 2;
+        this.currentOpacity = this.opacity * flicker;
+        if (this.y < -10) {
+          this.y = canvas.height + 10;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.currentOpacity;
+        ctx.fillStyle = this.color;
+        // 4-point star
+        const s = this.size;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y - s * 2);
+        ctx.quadraticCurveTo(this.x + s * 0.3, this.y - s * 0.3, this.x + s * 2, this.y);
+        ctx.quadraticCurveTo(this.x + s * 0.3, this.y + s * 0.3, this.x, this.y + s * 2);
+        ctx.quadraticCurveTo(this.x - s * 0.3, this.y + s * 0.3, this.x - s * 2, this.y);
+        ctx.quadraticCurveTo(this.x - s * 0.3, this.y - s * 0.3, this.x, this.y - s * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < SPARKLE_COUNT; i++) sparkles.push(new Sparkle());
+
+    function animateSparkles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      sparkles.forEach(s => { s.update(); s.draw(); });
+      requestAnimationFrame(animateSparkles);
+    }
+    animateSparkles();
+
+    // ===== NAV SCROLL =====
+    window.addEventListener('scroll', () => {
+      document.querySelector('nav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ===== REVEAL ON SCROLL =====
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
