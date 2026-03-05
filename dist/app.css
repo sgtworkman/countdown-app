@@ -517,3 +517,14 @@ input[type="date"] { color-scheme: light; }
 @keyframes number-pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes pulse-tick { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 .pulse { animation: pulse-tick 1s ease-in-out; }
+
+.header-version {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #C85FD4;
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-top: 1px;
+}
