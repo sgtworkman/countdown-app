@@ -194,7 +194,7 @@ function renderHome() {
       <div class="header-left">
         <a href="https://dayspop.com" class="header-logo-link" title="Back to DaysPop.com">
           <img src="dayspop-logo.jpg" alt="DaysPop" class="header-logo">
-          <span class="header-title">DaysPop</span>
+          <span class="header-title">DaysPop<span class="header-version">v1.0.3</span></span>
         </a>
         ${pro ? '<span class="header-pro">PRO</span>' : ''}
       </div>
