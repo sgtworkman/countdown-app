@@ -10,6 +10,15 @@
   <meta name="apple-mobile-web-app-title" content="DaysPop">
   <meta name="theme-color" content="#FDF0FF">
   <meta name="mobile-web-app-capable" content="yes">
+    <script>
+    // Kill any existing service workers
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(reg => reg.unregister());
+        if (regs.length) location.reload();
+      });
+    }
+  </script>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
