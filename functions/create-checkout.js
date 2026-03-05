@@ -23,6 +23,7 @@ export async function onRequestPost(context) {
     params.append('line_items[0][quantity]', '1');
     params.append('success_url', `${successUrl}${successUrl.includes('?') ? '&' : '?'}session_id={CHECKOUT_SESSION_ID}`);
     params.append('cancel_url', cancelUrl);
+    params.append('allow_promotion_codes', 'true');
 
     const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
