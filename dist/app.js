@@ -194,7 +194,7 @@ function renderHome() {
       <div class="header-left">
         <a href="https://dayspop.com" class="header-logo-link" title="Back to DaysPop.com">
           <img src="dayspop-logo.jpg" alt="DaysPop" class="header-logo">
-          <span class="header-title">DaysPop<span class="header-version">v1.0.3</span></span>
+          <span class="header-title">DaysPop<span class="header-version">v1.0.4</span></span>
         </a>
         ${pro ? '<span class="header-pro">PRO</span>' : ''}
       </div>
@@ -619,7 +619,7 @@ function renderSettings() {
         <div class="settings-card">
           <div class="settings-row">
             <span class="settings-row-label">Version</span>
-            <span class="settings-row-value" style="color:#C85FD4;font-weight:700;">v1.0.3</span>
+            <span class="settings-row-value" style="color:#C85FD4;font-weight:700;">v1.0.4</span>
           </div>
           <div class="settings-row">
             <span class="settings-row-label">Privacy Policy</span>
@@ -632,7 +632,7 @@ function renderSettings() {
         </div>
       </div>
 
-      <div class="settings-version">DaysPop v1.0.3 · Made with 💜</div>
+      <div class="settings-version">DaysPop v1.0.4 · Made with 💜</div>
     </div>
   `;
   el.innerHTML = html;
