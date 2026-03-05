@@ -1,4 +1,4 @@
-const CACHE = 'dayspop-v1';
+const CACHE = 'dayspop-v1.0.1';
 const ASSETS = [
   '/',
   '/index.html',
