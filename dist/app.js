@@ -632,7 +632,7 @@ function renderSettings() {
         </div>
       </div>
 
-      <div class="settings-version">DaysPop v1.0 · Made with 💜</div>
+      <div class="settings-version">DaysPop v1.0.3 · Made with 💜</div>
     </div>
   `;
   el.innerHTML = html;
