@@ -619,7 +619,7 @@ function renderSettings() {
         <div class="settings-card">
           <div class="settings-row">
             <span class="settings-row-label">Version</span>
-            <span class="settings-row-value">1.0.0</span>
+            <span class="settings-row-value" style="color:#C85FD4;font-weight:700;">v1.0.1</span>
           </div>
           <div class="settings-row">
             <span class="settings-row-label">Privacy Policy</span>
