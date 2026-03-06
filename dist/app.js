@@ -38,7 +38,11 @@ function getEvents() {
   catch { return []; }
 }
 function saveEvents(events) {
-  localStorage.setItem(STORAGE_EVENTS, JSON.stringify(events));
+  try {
+    localStorage.setItem(STORAGE_EVENTS, JSON.stringify(events));
+  } catch (e) {
+    showToast('Storage full — try removing a photo background');
+  }
 }
 function getEvent(id) {
   return getEvents().find(e => e.id === id) || null;
@@ -96,8 +100,9 @@ function formatDate(dateStr) {
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
-// Handle recurring: advance past events to next occurrence
-function processRecurring(events) {
+// Handle recurring: advance past events to next occurrence (run once on init)
+function processRecurring() {
+  const events = getEvents();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   let changed = false;
@@ -105,7 +110,6 @@ function processRecurring(events) {
     if (!ev.recurring) return;
     const target = new Date(ev.targetDate + 'T00:00:00');
     if (target < today) {
-      // advance to next year
       target.setFullYear(today.getFullYear());
       if (target < today) target.setFullYear(today.getFullYear() + 1);
       ev.targetDate = target.toISOString().split('T')[0];
@@ -113,12 +117,11 @@ function processRecurring(events) {
     }
   });
   if (changed) saveEvents(events);
-  return events;
 }
 
 // Sort: future events nearest first, past events at end
 function sortedEvents() {
-  let events = processRecurring(getEvents());
+  const events = getEvents();
   const now = new Date();
   const future = events.filter(e => new Date(e.targetDate + 'T00:00:00') >= now)
     .sort((a, b) => new Date(a.targetDate) - new Date(b.targetDate));
@@ -398,16 +401,15 @@ function selectEmoji(btn, emoji) {
 function selectTheme(id, isProTheme) {
   if (isProTheme && !isPro()) { showPaywall(); return; }
   selectedTheme = id;
+  // Update selection visually without re-rendering the entire form
   document.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('selected'));
-  document.querySelectorAll('.theme-swatch').forEach(s => {
-    if (s.onclick.toString().includes(`'${id}'`)) s.classList.add('selected');
+  document.querySelectorAll('.theme-swatch-wrap').forEach(wrap => {
+    const swatch = wrap.querySelector('.theme-swatch');
+    const name = wrap.querySelector('.theme-name');
+    if (name && name.textContent === getTheme(id).name) {
+      swatch.classList.add('selected');
+    }
   });
-  // Re-render to update selection (simpler approach)
-  const current = navStack[navStack.length - 1];
-  const param = current.split('/')[1];
-  renderAdd(param);
-  // Restore values
-  document.getElementById('input-name').value = document.getElementById('input-name')?.value || '';
 }
 
 function pickPhoto() {
@@ -417,33 +419,55 @@ function pickPhoto() {
 function handlePhotoSelected(e) {
   const file = e.target.files[0];
   if (!file) return;
+  // Compress image to prevent localStorage overflow
+  const img = new Image();
   const reader = new FileReader();
   reader.onload = function(ev) {
-    selectedPhoto = ev.target.result;
-    // Re-render the photo picker area
-    const current = navStack[navStack.length - 1];
-    const param = current.split('/')[1];
-    // Store form values before re-render
-    const nameVal = document.getElementById('input-name')?.value || '';
-    const dateVal = document.getElementById('input-date')?.value || '';
-    renderAdd(param);
-    document.getElementById('input-name').value = nameVal;
-    document.getElementById('input-date').value = dateVal;
-    validateAddForm();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 600; // max dimension
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = h * MAX / w; w = MAX; } }
+      else { if (h > MAX) { w = w * MAX / h; h = MAX; } }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      selectedPhoto = canvas.toDataURL('image/jpeg', 0.7);
+      // Update photo picker area without re-rendering entire form
+      updatePhotoPicker();
+    };
+    img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
 function removePhoto() {
   selectedPhoto = null;
-  const current = navStack[navStack.length - 1];
-  const param = current.split('/')[1];
-  const nameVal = document.getElementById('input-name')?.value || '';
-  const dateVal = document.getElementById('input-date')?.value || '';
-  renderAdd(param);
-  document.getElementById('input-name').value = nameVal;
-  document.getElementById('input-date').value = dateVal;
-  validateAddForm();
+  updatePhotoPicker();
+}
+
+function updatePhotoPicker() {
+  const pro = isPro();
+  const picker = document.getElementById('photo-picker');
+  if (!picker) return;
+  if (selectedPhoto) {
+    picker.onclick = pro ? pickPhoto : showPaywall;
+    picker.innerHTML = `
+      <img src="${selectedPhoto}" class="photo-preview" alt="Photo">
+      <div style="flex:1">
+        <div class="photo-picker-text">Photo selected</div>
+        <div class="photo-picker-sub">Tap to change</div>
+      </div>
+      <button class="photo-remove" onclick="event.stopPropagation(); removePhoto()">✕</button>`;
+  } else {
+    picker.onclick = pro ? pickPhoto : showPaywall;
+    picker.innerHTML = `
+      <span class="photo-picker-icon">📷</span>
+      <div>
+        <div class="photo-picker-text">${pro ? 'Add photo background' : 'PRO feature — tap to upgrade'}</div>
+        <div class="photo-picker-sub">${pro ? 'From your camera roll' : 'Unlock with DaysPop PRO'}</div>
+      </div>`;
+  }
 }
 
 function handleRecurringToggle(checkbox) {
@@ -705,9 +729,8 @@ async function checkProReturn() {
         showProSuccess();
       }
     } catch (e) {
-      // If verify fails, still mark pro (optimistic for UX)
-      setPro(params.get('session_id'));
-      showProSuccess();
+      // Verification failed — don't grant PRO without confirmation
+      showToast('Could not verify purchase. Please try restoring.');
     }
     window.history.replaceState({}, '', window.location.pathname);
   }
@@ -886,7 +909,7 @@ function initSparkles() {
 
 // ─── UTILITIES ───────────────────────────────
 function escHTML(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function escAttr(s) { return s.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+function escAttr(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ─── SERVICE WORKER ──────────────────────────
 function registerSW() {
@@ -899,6 +922,7 @@ function registerSW() {
 function init() {
   initSparkles();
   registerSW();
+  processRecurring();
   checkProReturn();
   navigate('home');
 }
@@ -927,5 +951,6 @@ window.doDelete = doDelete;
 window.lpStart = lpStart;
 window.lpEnd = lpEnd;
 window.toggleSetting = toggleSetting;
+window.updatePhotoPicker = updatePhotoPicker;
 
 document.addEventListener('DOMContentLoaded', init);

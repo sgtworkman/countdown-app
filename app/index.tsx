@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -8,7 +8,9 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { CountdownCard } from '../components/CountdownCard';
@@ -23,6 +25,23 @@ export default function HomeScreen() {
   const { events, loading } = useCountdowns();
   const { isPro, purchasePro } = usePro();
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showPastEvents, setShowPastEvents] = useState(true);
+
+  // Reload settings when screen focuses (e.g., returning from Settings)
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem('@countdown_settings').then((raw) => {
+        if (raw) {
+          const s = JSON.parse(raw);
+          setShowPastEvents(s.showPastEvents !== false);
+        }
+      });
+    }, [])
+  );
+
+  const filteredEvents = showPastEvents
+    ? events
+    : events.filter((e) => new Date(e.targetDate + 'T00:00:00') >= new Date());
 
   const handleAdd = () => {
     if (!isPro && events.length >= MAX_FREE_COUNTDOWNS) {
@@ -53,7 +72,7 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      {events.length === 0 ? (
+      {filteredEvents.length === 0 ? (
         /* Empty State */
         <View style={styles.emptyState}>
           <Animated.View entering={FadeInDown.delay(100).springify()}>
@@ -73,7 +92,7 @@ export default function HomeScreen() {
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
         >
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <Animated.View
               key={event.id}
               entering={FadeInDown.delay(index * 80).springify()}
@@ -112,13 +131,13 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#FDF0FF',
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fafafa',
+    backgroundColor: '#FDF0FF',
   },
   header: {
     flexDirection: 'row',

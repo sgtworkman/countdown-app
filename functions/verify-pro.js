@@ -5,7 +5,7 @@
 export async function onRequestGet(context) {
   const headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': 'https://app.dayspop.com',
   };
 
   try {
@@ -16,8 +16,8 @@ export async function onRequestGet(context) {
 
     const url = new URL(context.request.url);
     const sessionId = url.searchParams.get('session_id');
-    if (!sessionId) {
-      return new Response(JSON.stringify({ verified: false, error: 'Missing session_id' }), { status: 400, headers });
+    if (!sessionId || !/^cs_(test_|live_)?[a-zA-Z0-9]{10,}$/.test(sessionId)) {
+      return new Response(JSON.stringify({ verified: false, error: 'Invalid session_id' }), { status: 400, headers });
     }
 
     // Retrieve the Checkout Session from Stripe
@@ -42,7 +42,7 @@ export async function onRequestGet(context) {
 export async function onRequestOptions() {
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': 'https://app.dayspop.com',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     }

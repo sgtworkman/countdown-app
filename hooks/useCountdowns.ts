@@ -29,7 +29,24 @@ export function useCountdowns() {
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed: CountdownEvent[] = JSON.parse(raw);
+        // Auto-advance recurring events past their date
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let changed = false;
+        parsed.forEach((ev) => {
+          if (ev.recurring !== 'annual') return;
+          const target = new Date(ev.targetDate + 'T00:00:00');
+          if (target < today) {
+            target.setFullYear(today.getFullYear());
+            if (target < today) target.setFullYear(today.getFullYear() + 1);
+            ev.targetDate = target.toISOString().split('T')[0];
+            changed = true;
+          }
+        });
         setEvents(parsed);
+        if (changed) {
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        }
       }
     } catch (err) {
       console.error('Failed to load countdowns:', err);

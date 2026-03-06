@@ -13,6 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
@@ -36,6 +37,16 @@ export default function EventDetailScreen() {
   const event = getEvent(id ?? '');
   const [editing, setEditing] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showSeconds, setShowSeconds] = useState(true);
+
+  useEffect(() => {
+    AsyncStorage.getItem('@countdown_settings').then((raw) => {
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s.showSeconds === false) setShowSeconds(false);
+      }
+    });
+  }, []);
 
   // Edit state
   const [editName, setEditName] = useState('');
@@ -54,7 +65,7 @@ export default function EventDetailScreen() {
     }
   }, [event]);
 
-  const countdown = useCountdown(event?.targetDate ?? new Date().toISOString().split('T')[0], true);
+  const countdown = useCountdown(event?.targetDate ?? new Date().toISOString().split('T')[0], showSeconds);
   const theme = getTheme(event?.colorTheme ?? 'pink-purple');
 
   if (!event) {
@@ -222,13 +233,15 @@ export default function EventDetailScreen() {
                 secondaryColor={theme.secondaryTextColor}
                 large
               />
-              <CountdownTicker
-                hours={countdown.hours}
-                minutes={countdown.minutes}
-                seconds={countdown.seconds}
-                color={theme.textColor}
-                secondaryColor={theme.secondaryTextColor}
-              />
+              {showSeconds && !countdown.isPast && (
+                <CountdownTicker
+                  hours={countdown.hours}
+                  minutes={countdown.minutes}
+                  seconds={countdown.seconds}
+                  color={theme.textColor}
+                  secondaryColor={theme.secondaryTextColor}
+                />
+              )}
             </>
           )}
 
@@ -251,7 +264,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fafafa',
+    backgroundColor: '#FDF0FF',
     gap: 12,
   },
   notFoundText: {
@@ -330,7 +343,7 @@ const styles = StyleSheet.create({
   // Edit view
   editContainer: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#FDF0FF',
   },
   editHeader: {
     flexDirection: 'row',
