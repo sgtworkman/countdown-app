@@ -130,6 +130,10 @@ export default function EventDetailScreen() {
           <Text style={styles.editLabel}>Name</Text>
           <TextInput
             style={styles.editInput}
+            placeholder="Countdown name"
+            placeholderTextColor="#9ca3af"
+            selectionColor="#a855f7"
+            keyboardAppearance="light"
             value={editName}
             onChangeText={setEditName}
             maxLength={50}

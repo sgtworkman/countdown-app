@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Countdown",
-    "slug": "countdown-app",
-    "version": "1.0.0",
+    "name": "DaysPop",
+    "slug": "dayspop",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "countdown",
+    "scheme": "dayspop",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,8 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.workman.countdown",
-      "buildNumber": "1"
+      "bundleIdentifier": "com.dayspop.app",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +24,11 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.workman.countdown"
+      "package": "com.dayspop.app",
+      "versionCode": 2,
+      "permissions": [
+        "READ_MEDIA_IMAGES"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,9 +39,14 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Countdown to access your photos for custom backgrounds."
+          "photosPermission": "Allow DaysPop to access your photos for custom backgrounds."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
   }
 }

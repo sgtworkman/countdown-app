@@ -142,7 +142,7 @@ export default function SettingsScreen() {
         {/* Tip Jar */}
         <Text style={styles.sectionTitle}>Support the App</Text>
         <View style={styles.card}>
-          <Text style={styles.tipIntro}>Love Countdown? Leave a tip!</Text>
+          <Text style={styles.tipIntro}>Love DaysPop? Leave a tip!</Text>
           <View style={styles.tipGrid}>
             <Pressable onPress={() => handleTip('coffee')} style={styles.tipBtn}>
               <Text style={styles.tipEmoji}>☕</Text>

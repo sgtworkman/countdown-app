@@ -94,6 +94,8 @@ export default function AddScreen() {
           style={styles.input}
           placeholder='Disney Trip! 🏰'
           placeholderTextColor="#9ca3af"
+          selectionColor="#a855f7"
+          keyboardAppearance="light"
           value={name}
           onChangeText={setName}
           maxLength={50}
