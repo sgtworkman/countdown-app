@@ -22,21 +22,22 @@ import { MAX_FREE_COUNTDOWNS } from '../constants/themes';
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { events, loading } = useCountdowns();
+  const { events, loading, reload } = useCountdowns();
   const { isPro, purchasePro } = usePro();
   const [showPaywall, setShowPaywall] = useState(false);
   const [showPastEvents, setShowPastEvents] = useState(true);
 
-  // Reload settings when screen focuses (e.g., returning from Settings)
+  // Reload events and settings when screen focuses (e.g., returning from Add/Edit)
   useFocusEffect(
     useCallback(() => {
+      reload();
       AsyncStorage.getItem('@countdown_settings').then((raw) => {
         if (raw) {
           const s = JSON.parse(raw);
           setShowPastEvents(s.showPastEvents !== false);
         }
       });
-    }, [])
+    }, [reload])
   );
 
   const filteredEvents = showPastEvents
