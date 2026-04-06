@@ -197,7 +197,7 @@ function renderHome() {
       <div class="header-left">
         <a href="https://dayspop.com" class="header-logo-link" title="Back to DaysPop.com">
           <img src="dayspop-logo.jpg" alt="DaysPop" class="header-logo">
-          <span class="header-title">DaysPop<span class="header-version">v1.0.4</span></span>
+          <span class="header-title">DaysPop<span class="header-version">v1.0.5</span></span>
         </a>
         ${pro ? '<span class="header-pro">PRO</span>' : ''}
       </div>
@@ -367,11 +367,13 @@ function renderAdd(eventId) {
   el.innerHTML = html;
   document.getElementById('fab').style.display = 'none';
 
-  // Live validation
+  // Live validation — listen for both 'input' and 'change' events
+  // Mobile date pickers (especially iOS Safari) fire 'change' not 'input'
   const nameInput = document.getElementById('input-name');
   const dateInput = document.getElementById('input-date');
   nameInput.addEventListener('input', validateAddForm);
   dateInput.addEventListener('input', validateAddForm);
+  dateInput.addEventListener('change', validateAddForm);
 }
 
 function validateAddForm() {
@@ -643,7 +645,7 @@ function renderSettings() {
         <div class="settings-card">
           <div class="settings-row">
             <span class="settings-row-label">Version</span>
-            <span class="settings-row-value" style="color:#C85FD4;font-weight:700;">v1.0.4</span>
+            <span class="settings-row-value" style="color:#C85FD4;font-weight:700;">v1.0.5</span>
           </div>
           <div class="settings-row">
             <span class="settings-row-label">Privacy Policy</span>
@@ -656,7 +658,7 @@ function renderSettings() {
         </div>
       </div>
 
-      <div class="settings-version">DaysPop v1.0.4 · Made with 💜</div>
+      <div class="settings-version">DaysPop v1.0.5 · Made with 💜</div>
     </div>
   `;
   el.innerHTML = html;
