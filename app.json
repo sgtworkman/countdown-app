@@ -41,6 +41,14 @@
         {
           "photosPermission": "Allow DaysPop to access your photos for custom backgrounds."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#a855f7",
+          "iosDisplayInForeground": true
+        }
       ]
     ],
     "extra": {

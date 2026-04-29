@@ -32,9 +32,13 @@ export default function HomeScreen() {
     useCallback(() => {
       reload();
       AsyncStorage.getItem('@countdown_settings').then((raw) => {
-        if (raw) {
-          const s = JSON.parse(raw);
-          setShowPastEvents(s.showPastEvents !== false);
+        try {
+          if (raw) {
+            const s = JSON.parse(raw);
+            setShowPastEvents(s.showPastEvents !== false);
+          }
+        } catch {
+          // Corrupted storage — keep default
         }
       });
     }, [reload])

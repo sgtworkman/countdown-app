@@ -20,7 +20,7 @@ const FEATURES = [
   { icon: '🎨', label: 'All 8 color themes' },
   { icon: '📷', label: 'Custom photo backgrounds' },
   { icon: '🔄', label: 'Recurring annual events' },
-  { icon: '📌', label: 'Pin & sort favorites' },
+  { icon: '🔔', label: 'Custom reminder schedules' },
 ];
 
 export function ProPaywall({ visible, onClose, onPurchase }: Props) {

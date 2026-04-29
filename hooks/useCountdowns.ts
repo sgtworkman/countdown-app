@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
 import type { ColorTheme } from '../constants/themes';
+import type { NotificationInterval } from '../constants/notifications';
+import { scheduleEventNotifications, cancelEventNotifications } from '../lib/notifications';
 
 const STORAGE_KEY = '@countdown_events';
 
@@ -14,11 +16,12 @@ export interface CountdownEvent {
   photoUri?: string;
   recurring?: 'annual';
   createdAt: string;
-  notifyDaysBefore?: number;
+  notificationInterval?: NotificationInterval;
+  notificationIds?: string[];
 }
 
-export type CreateEventInput = Omit<CountdownEvent, 'id' | 'createdAt'>;
-export type UpdateEventInput = Partial<Omit<CountdownEvent, 'id' | 'createdAt'>>;
+export type CreateEventInput = Omit<CountdownEvent, 'id' | 'createdAt' | 'notificationIds'>;
+export type UpdateEventInput = Partial<Omit<CountdownEvent, 'id' | 'createdAt' | 'notificationIds'>>;
 
 export function useCountdowns() {
   const [events, setEvents] = useState<CountdownEvent[]>([]);
@@ -75,6 +78,18 @@ export function useCountdowns() {
         id: uuid.v4() as string,
         createdAt: new Date().toISOString(),
       };
+
+      // Schedule notifications if requested
+      if (newEvent.notificationInterval && newEvent.notificationInterval !== 'none') {
+        const ids = await scheduleEventNotifications(
+          newEvent.id,
+          newEvent.name,
+          newEvent.targetDate,
+          newEvent.notificationInterval
+        );
+        newEvent.notificationIds = ids;
+      }
+
       const updated = [...events, newEvent];
       await saveEvents(updated);
       return newEvent;
@@ -84,7 +99,24 @@ export function useCountdowns() {
 
   const updateEvent = useCallback(
     async (id: string, changes: UpdateEventInput): Promise<void> => {
-      const updated = events.map((e) => (e.id === id ? { ...e, ...changes } : e));
+      const existing = events.find((e) => e.id === id);
+      if (!existing) return;
+
+      const merged = { ...existing, ...changes };
+
+      // Reschedule if the notification interval changed
+      if ('notificationInterval' in changes) {
+        const ids = await scheduleEventNotifications(
+          merged.id,
+          merged.name,
+          merged.targetDate,
+          merged.notificationInterval ?? 'none',
+          existing.notificationIds ?? []
+        );
+        merged.notificationIds = ids;
+      }
+
+      const updated = events.map((e) => (e.id === id ? merged : e));
       await saveEvents(updated);
     },
     [events, saveEvents]
@@ -92,6 +124,10 @@ export function useCountdowns() {
 
   const deleteEvent = useCallback(
     async (id: string): Promise<void> => {
+      const event = events.find((e) => e.id === id);
+      if (event?.notificationIds?.length) {
+        await cancelEventNotifications(event.notificationIds);
+      }
       const updated = events.filter((e) => e.id !== id);
       await saveEvents(updated);
     },
@@ -99,24 +135,26 @@ export function useCountdowns() {
   );
 
   const getEvent = useCallback(
-    (id: string): CountdownEvent | undefined => {
-      return events.find((e) => e.id === id);
-    },
+    (id: string): CountdownEvent | undefined => events.find((e) => e.id === id),
     [events]
   );
 
-  // Sort by nearest date first, past events at end
-  const sortedEvents = [...events].sort((a, b) => {
-    const now = Date.now();
-    const aTime = new Date(a.targetDate).getTime();
-    const bTime = new Date(b.targetDate).getTime();
-    const aFuture = aTime >= now;
-    const bFuture = bTime >= now;
+  // Sort: today + future first (nearest first), past events at end (most recent first)
+  // Use local midnight for comparison to avoid timezone sorting bugs
+  const todayMidnight = new Date();
+  todayMidnight.setHours(0, 0, 0, 0);
+  const todayMs = todayMidnight.getTime();
 
-    if (aFuture && !bFuture) return -1;
-    if (!aFuture && bFuture) return 1;
-    if (aFuture && bFuture) return aTime - bTime;
-    return bTime - aTime; // Past events: most recent first
+  const sortedEvents = [...events].sort((a, b) => {
+    const aMs = new Date(a.targetDate + 'T00:00:00').getTime();
+    const bMs = new Date(b.targetDate + 'T00:00:00').getTime();
+    const aUpcoming = aMs >= todayMs;
+    const bUpcoming = bMs >= todayMs;
+
+    if (aUpcoming && !bUpcoming) return -1;
+    if (!aUpcoming && bUpcoming) return 1;
+    if (aUpcoming && bUpcoming) return aMs - bMs;
+    return bMs - aMs; // past: most recent first
   });
 
   return {

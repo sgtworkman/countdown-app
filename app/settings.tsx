@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
+import Constants from 'expo-constants';
 
 import { ProPaywall } from '../components/ProPaywall';
 import { usePro } from '../hooks/usePro';
@@ -42,9 +43,13 @@ export default function SettingsScreen() {
   }, []);
 
   const loadSettings = async () => {
-    const raw = await AsyncStorage.getItem(SETTINGS_KEY);
-    if (raw) {
-      setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(raw) });
+    try {
+      const raw = await AsyncStorage.getItem(SETTINGS_KEY);
+      if (raw) {
+        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(raw) });
+      }
+    } catch {
+      // Corrupted storage — fall back to defaults silently
     }
   };
 
@@ -164,7 +169,7 @@ export default function SettingsScreen() {
         <View style={styles.card}>
           <View style={styles.settingRow}>
             <Text style={styles.settingLabel}>Version</Text>
-            <Text style={styles.settingValue}>1.0.0</Text>
+            <Text style={styles.settingValue}>{Constants.expoConfig?.version ?? '—'}</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.settingRow}>

@@ -19,10 +19,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { EmojiPicker } from '../components/EmojiPicker';
 import { ThemePicker } from '../components/ThemePicker';
 import { PhotoPicker } from '../components/PhotoPicker';
+import { NotificationPicker } from '../components/NotificationPicker';
 import { ProPaywall } from '../components/ProPaywall';
 import { useCountdowns } from '../hooks/useCountdowns';
 import { usePro } from '../hooks/usePro';
 import type { ColorTheme } from '../constants/themes';
+import type { NotificationInterval } from '../constants/notifications';
 
 export default function AddScreen() {
   const router = useRouter();
@@ -36,6 +38,7 @@ export default function AddScreen() {
   const [colorTheme, setColorTheme] = useState<ColorTheme>('pink-purple');
   const [photoUri, setPhotoUri] = useState<string | undefined>();
   const [recurring, setRecurring] = useState(false);
+  const [notificationInterval, setNotificationInterval] = useState<NotificationInterval>('none');
   const [showPaywall, setShowPaywall] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(Platform.OS === 'ios');
 
@@ -56,6 +59,7 @@ export default function AddScreen() {
       colorTheme,
       photoUri: isPro ? photoUri : undefined,
       recurring: isPro && recurring ? 'annual' : undefined,
+      notificationInterval,
     });
 
     router.back();
@@ -158,6 +162,12 @@ export default function AddScreen() {
             />
           </View>
         </View>
+
+        {/* Reminders */}
+        <NotificationPicker
+          selected={notificationInterval}
+          onSelect={setNotificationInterval}
+        />
 
         {/* Save */}
         <Pressable

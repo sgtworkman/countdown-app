@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -21,11 +23,13 @@ import { CountdownNumber, CountdownTicker } from '../../components/CountdownNumb
 import { EmojiPicker } from '../../components/EmojiPicker';
 import { ThemePicker } from '../../components/ThemePicker';
 import { PhotoPicker } from '../../components/PhotoPicker';
+import { NotificationPicker } from '../../components/NotificationPicker';
 import { ProPaywall } from '../../components/ProPaywall';
 import { useCountdowns } from '../../hooks/useCountdowns';
 import { useCountdown } from '../../hooks/useCountdown';
 import { usePro } from '../../hooks/usePro';
 import { getTheme, type ColorTheme } from '../../constants/themes';
+import type { NotificationInterval } from '../../constants/notifications';
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -41,9 +45,13 @@ export default function EventDetailScreen() {
 
   useEffect(() => {
     AsyncStorage.getItem('@countdown_settings').then((raw) => {
-      if (raw) {
-        const s = JSON.parse(raw);
-        if (s.showSeconds === false) setShowSeconds(false);
+      try {
+        if (raw) {
+          const s = JSON.parse(raw);
+          if (s.showSeconds === false) setShowSeconds(false);
+        }
+      } catch {
+        // Corrupted storage — keep default
       }
     });
   }, []);
@@ -54,6 +62,7 @@ export default function EventDetailScreen() {
   const [editTheme, setEditTheme] = useState<ColorTheme>('pink-purple');
   const [editPhotoUri, setEditPhotoUri] = useState<string | undefined>();
   const [editRecurring, setEditRecurring] = useState(false);
+  const [editNotification, setEditNotification] = useState<NotificationInterval>('none');
 
   useEffect(() => {
     if (event) {
@@ -62,6 +71,7 @@ export default function EventDetailScreen() {
       setEditTheme(event.colorTheme);
       setEditPhotoUri(event.photoUri);
       setEditRecurring(event.recurring === 'annual');
+      setEditNotification(event.notificationInterval ?? 'none');
     }
   }, [event]);
 
@@ -91,6 +101,7 @@ export default function EventDetailScreen() {
       colorTheme: editTheme,
       photoUri: isPro ? editPhotoUri : event.photoUri,
       recurring: isPro && editRecurring ? 'annual' : undefined,
+      notificationInterval: editNotification,
     });
     setEditing(false);
   };
@@ -116,7 +127,10 @@ export default function EventDetailScreen() {
 
   if (editing) {
     return (
-      <View style={[styles.editContainer, { paddingTop: insets.top + 8 }]}>
+      <KeyboardAvoidingView
+        style={[styles.editContainer, { paddingTop: insets.top + 8 }]}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
         <View style={styles.editHeader}>
           <Pressable onPress={() => setEditing(false)}>
             <Text style={styles.cancelText}>Cancel</Text>
@@ -164,6 +178,10 @@ export default function EventDetailScreen() {
               thumbColor={editRecurring ? '#a855f7' : '#f3f4f6'}
             />
           </View>
+          <NotificationPicker
+            selected={editNotification}
+            onSelect={setEditNotification}
+          />
           <View style={{ height: insets.bottom + 40 }} />
         </ScrollView>
         <ProPaywall
@@ -171,7 +189,7 @@ export default function EventDetailScreen() {
           onClose={() => setShowPaywall(false)}
           onPurchase={purchasePro}
         />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
